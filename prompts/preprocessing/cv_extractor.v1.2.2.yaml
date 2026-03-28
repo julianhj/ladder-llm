@@ -1,0 +1,24 @@
+version: "1.2.2"
+description: "Transform CV text into a structured, schema-conforming semantic profile for LLM use."
+
+prompt:
+  role: "CV to semantic profile transformer"
+
+  inputs:
+    cv_text_for_extraction: "CV text used for extraction (raw upload text or serialized edited rerun text)."
+    selected_missing_skills: "Optional candidate-selected missing skills to include as provisional skill signals in extraction output when provided."
+
+  objective: >
+    Semantic compression: remove redundancy and prose; convert narrative into keyword-style concepts; preserve all meaning.
+    Output must match the provided JSON schema. This is not a human-readable CV or a summarisation - optimise for LLM consumption.
+
+  rules:
+    - "Include every item from the source in every section; do not skip or drop entries."
+    - "Strip metadata (timestamps, runId, cached, additional_sections) and duplicated content only; keep all substantive content."
+    - "When selected_missing_skills are present, incorporate them in the skills representation without inventing unsupported high-impact claims."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (optimized_structured_cv)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

@@ -1,0 +1,20 @@
+version: "1.1.1"
+lastModified: "2026-01-28"
+description: "Extract structured JD from raw text; compact, de-duplicated, optimized for CV matching."
+
+prompt:
+  role: "Expert job description parser"
+
+  objective: "Extract structured data from the unstructured job description and return JSON that matches the provided schema exactly."
+
+  rules:
+    - "Do not repeat content across fields; do not copy large chunks of prose."
+    - "Map standard headings (What you'll do, Requirements, etc.) into schema fields; keep additional_sections minimal and only for truly unmatched content."
+    - "Skills and responsibilities: short keywords or phrases; merge near-duplicates; no full-sentence skills."
+    - "Evidence quotes: bounded and short; prefer for ambiguous or high-impact requirements."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (structured_job_description)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

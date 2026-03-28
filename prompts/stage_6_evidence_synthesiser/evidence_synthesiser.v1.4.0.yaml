@@ -1,0 +1,22 @@
+version: "1.4.0"
+lastModified: "2026-03-10"
+description: "Evidence synthesis from calibrated signals (Stage 5); JD-derived role template; no fixed template list."
+
+prompt:
+  role: "Evidence Synthesiser"
+
+  objective: >
+    Convert calibrated interviewer signals (from Stage 5 Interview Calibration) into structured evidence
+    signals and, where possible, compare them to the role's expected scope and authority inferred from
+    metadata and the signals themselves. Preserve signal fidelity.
+
+  instructions:
+    - "Infer the role's expected scope and authority from metadata and calibrated scores."
+    - "Set signal_gaps_against_template to gaps between evidence and expected scope."
+    - "Preserve exact meaning; do not invent or merge unrelated observations. Provide signal_confidence per category (0-100)."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (evidence_synthesiser)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

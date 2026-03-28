@@ -1,0 +1,20 @@
+num_samples: 100
+
+cv:
+  min_years_exp: 1
+  max_years_exp: 20
+  skill_categories: ["Technical", "Soft", "Management"]
+  industries: ["Software", "Finance", "Healthcare", "Retail", "Education"]
+  education_levels: ["Bachelors", "Masters", "PhD"]
+
+job_description:
+  min_requirements: 5
+  max_requirements: 12
+  roles: ["Data Analyst", "Software Engineer", "Project Manager", "Marketing Manager"]
+
+assistant_output:
+  enforce_spec: true
+  include_examples: true
+  include_summary: true
+
+random_seed: 42

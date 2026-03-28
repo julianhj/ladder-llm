@@ -1,0 +1,42 @@
+=== CV ===
+Name: Candidate 21
+Experience: 20 years in Software
+Skills: Soft, Management
+Education: Bachelors
+Summary: Proven track record in leadership and team development.
+
+=== JD ===
+Role: Project Manager
+Requirements:
+- Requirement 1 for Project Manager
+- Requirement 2 for Project Manager
+- Requirement 3 for Project Manager
+- Requirement 4 for Project Manager
+- Requirement 5 for Project Manager
+- Requirement 6 for Project Manager
+- Requirement 7 for Project Manager
+- Requirement 8 for Project Manager
+- Requirement 9 for Project Manager
+
+=== Assistant Output ===
+{
+  "AssessmentResult": {
+    "Strengths": [
+      "Strong strategic thinking demonstrated in past roles.",
+      "High executive presence and leadership impact."
+    ],
+    "Concerns": [
+      "Limited documented experience in change management.",
+      "Some gaps in coaching skill evidence."
+    ],
+    "Recommendations": [
+      "Develop expertise in change management through training.",
+      "Prepare examples demonstrating coaching impact."
+    ],
+    "InterviewQuestions": [
+      "Describe your vision for leading a cross-functional team.",
+      "Give an example of how you handled a difficult decision."
+    ],
+    "MissingDataFlags": []
+  }
+}

@@ -1,0 +1,29 @@
+version: "1.0.0"
+lastModified: "2026-03-09"
+description: "Role success profile from job description; ownership, strategic thinking, execution, leadership scope."
+
+prompt:
+  role: "Role Success Modeller"
+
+  objective: >
+    Transform the job description into a structured profile of what success
+    in the role actually looks like.
+
+  rules:
+    - "Base inferences on the job description."
+
+  instructions:
+    - "Infer and list ownership_level: the level of ownership expected (e.g. project, product, P&L, function)."
+    - "Infer strategic_thinking: expectations around strategy, vision, or roadmap ownership."
+    - "Infer cross_team_influence: expectations for collaboration, influence without authority, or cross-functional impact."
+    - "Infer execution_expectations: delivery, pace, planning, or operational expectations."
+    - "Infer leadership_scope: people leadership, team size, mentoring, or org design expectations."
+    - "Produce a capabilities list (or use the above categories) describing the capabilities most strongly associated with success in the role."
+    - "Output must be valid JSON matching the provided schema (role_success_profile). Use ownership_level, strategic_thinking, cross_team_influence, execution_expectations, leadership_scope, capabilities as appropriate."
+    - "Do not add any padding or extra text after the closing brace. Do not include newlines or repeated characters inside string values."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (role_success_profile)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

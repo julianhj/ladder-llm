@@ -1,0 +1,1843 @@
+{
+  "version": "2.3.0",
+  "lastModified": "2026-03-22",
+  "_conventions": "See configs/README.md for input/output ref format, defaultModel, and optional per-agent timeout (ms).",
+  "defaultModel": {
+    "name": "gpt-5.4-mini",
+    "temperature": 0.7
+  },
+  "preprocessing": {
+    "name": "gpt-5.4-mini",
+    "max_tokens": 8000
+  },
+  "parallelStageGroups": [
+    [
+      "stage_0_career_trajectory",
+      "stage_2_role_success_model"
+    ],
+    [
+      "stage_7_evidence_traceability",
+      "stage_8_panel_weighting"
+    ],
+    [
+      "stage_10_anomaly_detection",
+      "stage_12_recruiter_reality_validator",
+      "stage_13_seniority_signal_enforcement"
+    ]
+  ],
+  "stages": [
+    {
+      "id": "stage_0_career_trajectory",
+      "name": "Stage 0 - Career Trajectory Analysis",
+      "agents": [
+        {
+          "id": "career_trajectory_analysis",
+          "name": "Career Trajectory Analysis",
+          "promptBase": "stage_0_career_trajectory/career_trajectory_analysis",
+          "version": "1.4.0",
+          "outputSchema": "career_trajectory_profile",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience timeline (roles, dates, responsibilities) for trajectory signals"
+            },
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "Optional summary keywords for context"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "Optional current title for context"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "excludeFullStructuredJD": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for career_trajectory_profile tasks",
+            "instructions": "Act as a Career Trajectory Analysis specializing in career_trajectory_profile. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_2_role_success_model",
+      "name": "Stage 2 - Role Success Model",
+      "agents": [
+        {
+          "id": "role_success_model",
+          "name": "Role Success Model",
+          "promptBase": "stage_2_role_success_model/role_success_model",
+          "version": "1.0.0",
+          "outputSchema": "role_success_profile",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "CV summary keywords (context for role fit)"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "CV skills list"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "CV experience entries"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "CV professional title"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company name"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "excludeFullStructuredCV": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 8000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for role_success_profile tasks",
+            "instructions": "Act as a Role Success Model specializing in role_success_profile. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_3_interviews",
+      "name": "Stage 3 - Interviews",
+      "agents": [
+        {
+          "id": "technical_interviewer",
+          "name": "Technical Interviewer",
+          "promptBase": "stage_3_interviews/technical_interviewer",
+          "version": "3.0.0",
+          "outputSchema": "interview_assessment",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "timeout": 60000,
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "Summary and keyword signals from CV"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "Skills extracted from CV"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience entries from CV"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "Job titles from CV (if provided)"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title (from job description)"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company (from job description)"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "medium"
+            }
+          },
+          "catalog": {
+            "role": "interviewer",
+            "expertise": [
+              "Technical Assessment",
+              "Software Engineering",
+              "System Architecture"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Evaluates technical skills, coding abilities, and system design expertise",
+            "instructions": "Act as a Technical Interviewer specializing in interview_assessment. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "soft_skills_interviewer",
+          "name": "Soft Skills Interviewer",
+          "promptBase": "stage_3_interviews/soft_skills_interviewer",
+          "version": "3.0.0",
+          "outputSchema": "interview_assessment",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "timeout": 60000,
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "Summary and keyword signals from CV"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "Skills extracted from CV"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience entries from CV"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "Job titles from CV (if provided)"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title (from job description)"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company (from job description)"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "medium"
+            }
+          },
+          "catalog": {
+            "role": "interviewer",
+            "expertise": [
+              "Soft Skills Evaluation",
+              "Communication",
+              "Team Collaboration"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Assesses communication, teamwork, and interpersonal capabilities",
+            "instructions": "Act as a Soft Skills Interviewer specializing in interview_assessment. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "leadership_interviewer",
+          "name": "Leadership Interviewer",
+          "promptBase": "stage_3_interviews/leadership_interviewer",
+          "version": "5.0.0",
+          "outputSchema": "interview_assessment",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "timeout": 60000,
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "Summary and keyword signals from CV"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "Skills extracted from CV"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience entries from CV"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "Job titles from CV (if provided)"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title (from job description)"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company (from job description)"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "medium"
+            }
+          },
+          "catalog": {
+            "role": "interviewer",
+            "expertise": [
+              "Leadership Assessment",
+              "Management",
+              "Strategic Thinking"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Evaluates leadership potential, management skills, and strategic thinking",
+            "instructions": "Act as a Leadership Interviewer specializing in interview_assessment. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "recruiter",
+          "name": "Recruiter",
+          "promptBase": "stage_3_interviews/recruiter",
+          "version": "3.0.0",
+          "outputSchema": "interview_assessment",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "timeout": 60000,
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "Summary and keyword signals from CV"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "Skills extracted from CV"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience entries from CV"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "Job titles from CV (if provided)"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title (from job description)"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company (from job description)"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "medium"
+            }
+          },
+          "catalog": {
+            "role": "recruiter",
+            "expertise": [
+              "Talent Acquisition",
+              "Candidate Screening",
+              "Cultural Fit"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Screens candidates for cultural fit and initial qualification",
+            "instructions": "Act as a Recruiter specializing in interview_assessment. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "hiring_manager",
+          "name": "Hiring Manager",
+          "promptBase": "stage_3_interviews/hiring_manager",
+          "version": "3.0.0",
+          "outputSchema": "interview_assessment",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "timeout": 60000,
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "Summary and keyword signals from CV"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "Skills extracted from CV"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience entries from CV"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "Job titles from CV (if provided)"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title (from job description)"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company (from job description)"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "medium"
+            }
+          },
+          "catalog": {
+            "role": "hiring_manager",
+            "expertise": [
+              "Hiring Decisions",
+              "Team Building",
+              "Resource Planning"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Makes hiring decisions based on team needs and business objectives",
+            "instructions": "Act as a Hiring Manager specializing in interview_assessment. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_4_signal_normalisation",
+      "name": "Stage 4 - Signal Normalisation",
+      "agents": [
+        {
+          "id": "signal_normaliser",
+          "name": "Signal Normaliser",
+          "promptBase": "stage_4_signal_normalisation/signal_normaliser",
+          "version": "2.0.1",
+          "outputSchema": "signal_normalized",
+          "injectedPrompts": [
+            "json_output_format",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "stage",
+              "stageId": "stage_3_interviews",
+              "field": "result.signal_blocks"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 1000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for signal_normalized tasks",
+            "instructions": "Act as a Signal Normaliser specializing in signal_normalized. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_5_interview_calibration",
+      "name": "Stage 5 - Interview Calibration",
+      "agents": [
+        {
+          "id": "interview_calibration",
+          "name": "Interview Calibration",
+          "promptBase": "stage_5_interview_calibration/interview_calibration",
+          "version": "1.1.0",
+          "outputSchema": "calibrated_signals",
+          "injectedPrompts": [
+            "json_output_format",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "stage",
+              "stageId": "stage_4_signal_normalisation",
+              "description": "Stage 4 signal normalisation: normalised signals for calibration (stage_4_signal_normalisation)."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 5000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for calibrated_signals tasks",
+            "instructions": "Act as a Interview Calibration specializing in calibrated_signals. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_6_evidence_synthesiser",
+      "name": "Stage 6 - Evidence Synthesiser",
+      "agents": [
+        {
+          "id": "evidence_synthesiser",
+          "name": "Evidence Synthesiser",
+          "promptBase": "stage_6_evidence_synthesiser/evidence_synthesiser",
+          "version": "1.6.0",
+          "outputSchema": "evidence_synthesiser",
+          "injectedPrompts": [
+            "json_output_format",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_2_role_success_model",
+                "stage_5_interview_calibration"
+              ],
+              "stageFields": {
+                "stage_2_role_success_model": [
+                  "result.ownership_level",
+                  "result.capabilities",
+                  "result.leadership_scope",
+                  "result.execution_expectations"
+                ],
+                "stage_5_interview_calibration": [
+                  "result.calibrated_scores",
+                  "result.calibrated_signals",
+                  "result.comparable_dimensions"
+                ]
+              },
+              "description": "Stage 2 (role success model) is the template: ownership_level, capabilities, leadership_scope, execution_expectations. Stage 5: calibrated_scores, calibrated_signals, comparable_dimensions. Use Stage 2 as expected scope; compare evidence to it for signal_gaps_against_template."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 5000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for evidence_synthesiser tasks",
+            "instructions": "Act as a Evidence Synthesiser specializing in evidence_synthesiser. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_7_evidence_traceability",
+      "name": "Stage 7 - Evidence Traceability",
+      "agents": [
+        {
+          "id": "evidence_traceability",
+          "name": "Evidence Traceability",
+          "promptBase": "stage_7_evidence_traceability/evidence_traceability",
+          "version": "1.0.0",
+          "outputSchema": "evidence_traceability",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_6_evidence_synthesiser"
+              ],
+              "stageFields": {
+                "stage_6_evidence_synthesiser": [
+                  "result.scope_signals",
+                  "result.execution_signals",
+                  "result.leadership_signals",
+                  "result.business_signals",
+                  "result.risk_signals",
+                  "result.signal_confidence",
+                  "result.signal_gaps_against_template"
+                ]
+              },
+              "description": "Stage 6 evidence synthesis: scope_signals, execution_signals, leadership_signals, business_signals, risk_signals, signal_confidence, signal_gaps_against_template."
+            },
+            "signal_confidence": {
+              "from": "stage",
+              "stageId": "stage_6_evidence_synthesiser",
+              "field": "result.signal_confidence",
+              "description": "Per-category confidence (scope, execution, leadership, business) 0-100 from evidence synthesis."
+            },
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "CV summary and keywords for evidence linking"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "CV skills for evidence linking"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "CV experience entries (company, role, period, tags) for evidence refs"
+            },
+            "structuredCV_title": {
+              "from": "input",
+              "field": "structuredCV.header.professional_title",
+              "description": "CV professional title"
+            },
+            "structuredJobDescription_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title from job description"
+            },
+            "structuredJobDescription_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company from job description"
+            },
+            "structuredJobDescription_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary for evidence linking"
+            },
+            "structuredJobDescription_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills from JD"
+            },
+            "structuredJobDescription_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills from JD"
+            },
+            "structuredJobDescription_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities from JD"
+            },
+            "structuredJobDescription_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications from JD"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": false,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 5000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for evidence_traceability tasks",
+            "instructions": "Act as a Evidence Traceability specializing in evidence_traceability. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_8_panel_weighting",
+      "name": "Stage 8 - Panel Weighting",
+      "agents": [
+        {
+          "id": "panel_weighting",
+          "name": "Panel Weighting",
+          "promptBase": "stage_8_panel_weighting/panel_weighting",
+          "version": "1.1.1",
+          "outputSchema": "panel_weighting",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_3_interviews",
+                "stage_6_evidence_synthesiser"
+              ],
+              "stageFields": {
+                "stage_3_interviews": "result.signal_blocks",
+                "stage_6_evidence_synthesiser": [
+                  "result.scope_signals",
+                  "result.execution_signals",
+                  "result.leadership_signals",
+                  "result.business_signals",
+                  "result.risk_signals"
+                ]
+              },
+              "description": "Interviewer outputs per dimension (Technical, Soft Skills, Leadership, Recruiter, Hiring Manager). Stage 3 domain-agnostic signals (scope, execution, leadership, business, risk). Optional structured job description."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 2000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for panel_weighting tasks",
+            "instructions": "Act as a Panel Weighting specializing in panel_weighting. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_9_signal_confidence_aggregation",
+      "name": "Stage 9 - Signal Confidence Aggregation",
+      "agents": []
+    },
+    {
+      "id": "stage_10_anomaly_detection",
+      "name": "Stage 10 - Anomaly Detection",
+      "agents": [
+        {
+          "id": "automated_anomaly_detector",
+          "name": "Automated Anomaly Detector",
+          "promptBase": "stage_10_anomaly_detection/anomaly_detector",
+          "version": "1.1.1",
+          "outputSchema": "anomaly_detection",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_8_panel_weighting"
+              ],
+              "stageFields": {
+                "stage_8_panel_weighting": [
+                  "result.weighted_scores",
+                  "result.panel_confidence",
+                  "result.panel_risk_flags"
+                ]
+              },
+              "description": "Stage 2 aggregated_signals (technical_scope, execution_authority, leadership_impact, business_alignment, delivery_risk, signal_gaps). Stage 3: scope_signals, execution_signals, leadership_signals, business_signals, risk_signals, signal_confidence. Stage 4: weighted_scores, panel_confidence, panel_risk_flags."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 4096,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for anomaly_detection tasks",
+            "instructions": "Act as a Automated Anomaly Detector specializing in anomaly_detection. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_11_counterfactual_challenge",
+      "name": "Stage 11 - Counterfactual Challenge",
+      "agents": [
+        {
+          "id": "counterfactual_challenge",
+          "name": "Counterfactual Challenge",
+          "promptBase": "stage_11_counterfactual_challenge/counterfactual_challenge",
+          "version": "1.0.0",
+          "outputSchema": "counterfactual_challenge_report",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_5_interview_calibration",
+                "stage_6_evidence_synthesiser",
+                "stage_8_panel_weighting",
+                "stage_9_signal_confidence_aggregation",
+                "stage_10_anomaly_detection"
+              ],
+              "stageFields": {
+                "stage_5_interview_calibration": [
+                  "result.calibrated_scores",
+                  "result.calibrated_signals",
+                  "result.comparable_dimensions"
+                ],
+                "stage_6_evidence_synthesiser": [
+                  "result.scope_signals",
+                  "result.execution_signals",
+                  "result.leadership_signals",
+                  "result.business_signals",
+                  "result.risk_signals"
+                ],
+                "stage_8_panel_weighting": [
+                  "result.weighted_scores",
+                  "result.panel_confidence",
+                  "result.panel_risk_flags"
+                ],
+                "stage_9_signal_confidence_aggregation": [
+                  "result.signal_confidence"
+                ],
+                "stage_10_anomaly_detection": [
+                  "result.anomaly_detected",
+                  "result.anomaly_type",
+                  "result.affected_fields"
+                ]
+              },
+              "description": "Composite JSON array of prior stage results. Each element has agentId, agentName, success, and result. Stages included: stage_5_interview_calibration (calibrated_scores, calibrated_signals, comparable_dimensions), stage_6_evidence_synthesiser (scope_signals, execution_signals, leadership_signals, business_signals, risk_signals), stage_8_panel_weighting (weighted_scores, panel_confidence, panel_risk_flags), stage_9_signal_confidence_aggregation (signal_confidence), stage_10_anomaly_detection (anomaly_detected, anomaly_type, affected_fields). Use these results to ground your challenges; do not state that the data is missing."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 6000,
+            "reasoning": {
+              "effort": "low"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for counterfactual_challenge_report tasks",
+            "instructions": "Act as a Counterfactual Challenge specializing in counterfactual_challenge_report. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_12_recruiter_reality_validator",
+      "name": "Stage 12 - Recruiter Reality Validator",
+      "agents": [
+        {
+          "id": "recruiter_reality_validator",
+          "name": "Recruiter Reality Validator",
+          "promptBase": "stage_12_recruiter_reality_validator/recruiter_reality_validator",
+          "version": "1.2.1",
+          "outputSchema": "recruiter_reality_validation",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_4_signal_normalisation",
+                "stage_6_evidence_synthesiser"
+              ],
+              "description": "Calibrated signals (Stage 3/4), evidence items, evidence_coverage_score, signal_graph, computed_score, inferred_seniority, structured CV, aggregated_signals, signal_gaps_against_template."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": true,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 3000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "recruiter",
+            "expertise": [
+              "Talent Acquisition",
+              "Candidate Screening",
+              "Cultural Fit"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Screens candidates for cultural fit and initial qualification",
+            "instructions": "Act as a Recruiter Reality Validator specializing in recruiter_reality_validation. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_13_seniority_signal_enforcement",
+      "name": "Stage 13 - Seniority Signal Enforcement",
+      "agents": [
+        {
+          "id": "seniority_signal_enforcement",
+          "name": "Seniority Signal Enforcement",
+          "promptBase": "stage_13_seniority_signal_enforcement/seniority_signal_enforcement",
+          "version": "1.3.7",
+          "outputSchema": "seniority_signal_enforcement",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_6_evidence_synthesiser"
+              ],
+              "stageFields": {
+                "stage_6_evidence_synthesiser": [
+                  "result.scope_signals",
+                  "result.execution_signals",
+                  "result.leadership_signals",
+                  "result.business_signals",
+                  "result.risk_signals",
+                  "result.signal_gaps_against_template"
+                ]
+              },
+              "description": "Candidate evidence signals from Stage 6. scope_signals, execution_signals, leadership_signals, business_signals, risk_signals. Optional missing signals relative to role template."
+            },
+            "structured_job_description_role_title": {
+              "from": "input",
+              "field": "structuredJobDescription.role_title",
+              "description": "Role title from job description"
+            },
+            "structured_job_description_company": {
+              "from": "input",
+              "field": "structuredJobDescription.company",
+              "description": "Company from job description"
+            },
+            "structured_job_description_summary": {
+              "from": "input",
+              "field": "structuredJobDescription.summary",
+              "description": "Job summary"
+            },
+            "structured_job_description_required_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.required_skills",
+              "description": "Required skills"
+            },
+            "structured_job_description_preferred_skills": {
+              "from": "input",
+              "field": "structuredJobDescription.preferred_skills",
+              "description": "Preferred skills"
+            },
+            "structured_job_description_responsibilities": {
+              "from": "input",
+              "field": "structuredJobDescription.responsibilities",
+              "description": "Responsibilities"
+            },
+            "structured_job_description_qualifications": {
+              "from": "input",
+              "field": "structuredJobDescription.qualifications",
+              "description": "Qualifications"
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "inputOnlyPreviousStageResults": false,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 3000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for seniority_signal_enforcement tasks",
+            "instructions": "Act as a Seniority Signal Enforcement specializing in seniority_signal_enforcement. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_14_consensus_decision",
+      "name": "Stage 14 - Consensus Decision",
+      "agents": [
+        {
+          "id": "consensus_decision_maker",
+          "name": "Consensus Decision Maker",
+          "promptBase": "stage_14_consensus_decision/consensus_decision_maker",
+          "timeout": 60000,
+          "version": "1.0.0",
+          "outputSchema": "consensus",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "inputs": {
+            "compact_signal_summary": true,
+            "signal_layer": true,
+            "previousStageResults": {
+              "from": "composite",
+              "stageIds": [
+                "stage_0_career_trajectory",
+                "stage_2_role_success_model",
+                "stage_4_signal_normalisation",
+                "stage_5_interview_calibration",
+                "stage_6_evidence_synthesiser",
+                "stage_7_evidence_traceability",
+                "stage_8_panel_weighting",
+                "stage_9_signal_confidence_aggregation",
+                "stage_10_anomaly_detection",
+                "stage_11_counterfactual_challenge",
+                "stage_12_recruiter_reality_validator",
+                "stage_13_seniority_signal_enforcement"
+              ],
+              "stageFields": {
+                "stage_0_career_trajectory": [
+                  "result.trajectory_signals",
+                  "result.career_timeline"
+                ],
+                "stage_2_role_success_model": [
+                  "result.ownership_level",
+                  "result.capabilities",
+                  "result.leadership_scope",
+                  "result.execution_expectations"
+                ],
+                "stage_4_signal_normalisation": [
+                  "result.confidence_scores",
+                  "result.signal_gaps"
+                ],
+                "stage_5_interview_calibration": [
+                  "result.calibrated_scores",
+                  "result.comparable_dimensions"
+                ],
+                "stage_6_evidence_synthesiser": [
+                  "result.signal_confidence",
+                  "result.template_description",
+                  "result.signal_gaps_against_template"
+                ],
+                "stage_7_evidence_traceability": [
+                  "result.scope",
+                  "result.execution",
+                  "result.leadership",
+                  "result.business",
+                  "result.risk"
+                ],
+                "stage_8_panel_weighting": [
+                  "result.weighted_scores",
+                  "result.panel_confidence",
+                  "result.panel_risk_flags"
+                ],
+                "stage_9_signal_confidence_aggregation": [
+                  "result.signal_confidence"
+                ],
+                "stage_10_anomaly_detection": [
+                  "result.anomaly_detected",
+                  "result.anomaly_type",
+                  "result.confidence_score",
+                  "result.affected_fields"
+                ],
+                "stage_11_counterfactual_challenge": [
+                  "result.alternative_interpretations",
+                  "result.risk_implications",
+                  "result.challenged_claims",
+                  "result.strength_challenges"
+                ],
+                "stage_12_recruiter_reality_validator": [
+                  "result.inflation_flags",
+                  "result.director_signal_gaps",
+                  "result.weak_evidence_signals",
+                  "result.unsupported_scope_claims",
+                  "result.credibility_score"
+                ],
+                "stage_13_seniority_signal_enforcement": [
+                  "result.target_seniority_level",
+                  "result.candidate_seniority_level",
+                  "result.seniority_gap",
+                  "result.inflation_risk",
+                  "result.missing_signals",
+                  "result.rewrite_constraints",
+                  "result.skill_representation_mode",
+                  "result.experience_format"
+                ]
+              },
+              "description": "Required. Trimmed outputs from Stage 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "low"
+            }
+          },
+          "catalog": {
+            "role": "decision_maker",
+            "expertise": [
+              "Decision Making",
+              "Consensus Building",
+              "Data Analysis",
+              "Final Decision Making",
+              "Consensus Building"
+            ],
+            "available_tasks": [
+              "Make hiring decision",
+              "Provide final recommendation",
+              "Suggest next steps"
+            ],
+            "description": "Synthesizes multiple interview assessments into a consensus view and makes the final hiring decision",
+            "instructions": "Act as a Consensus Decision Maker specializing in consensus. Make informed final hiring decisions based on all available assessments and provide clear reasoning."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_15_final_decision",
+      "name": "Stage 15 - Final Decision",
+      "parallel": true,
+      "mergeOutputs": {
+        "type": "combine",
+        "mode": "shallow",
+        "sourceAgents": [
+          "evidence_integration",
+          "seniority_recruiter_reality_enforcement",
+          "skill_representation_formatter",
+          "experience_representation_formatter",
+          "profile_narrative_rewriter",
+          "section_level_cv_rewriter",
+          "role_fit_ats_enhancement"
+        ],
+        "output": {
+          "optimized_cv_sections": {
+            "from": "section_level_cv_rewriter",
+            "field": "rewritten_sections"
+          },
+          "missing_skills": {
+            "from": "skill_representation_formatter",
+            "field": "missing_skills"
+          },
+          "changes_made": {
+            "from": "section_level_cv_rewriter",
+            "field": "changes_made"
+          },
+          "rationale": {
+            "from": "section_level_cv_rewriter",
+            "field": "rationale"
+          },
+          "ats_optimization": {
+            "from": "role_fit_ats_enhancement",
+            "field": "ats_optimization"
+          },
+          "keyword_enhancements": {
+            "from": "role_fit_ats_enhancement",
+            "field": "keyword_enhancements"
+          },
+          "role_fit_summary": {
+            "from": "role_fit_ats_enhancement",
+            "field": "role_fit_summary"
+          },
+          "section_help": {
+            "from": "profile_narrative_rewriter",
+            "field": "section_help"
+          }
+        }
+      },
+      "agents": [
+        {
+          "id": "evidence_integration",
+          "name": "Evidence Integration",
+          "promptBase": "stage_15_final_decision/evidence_integration",
+          "version": "1.0.4",
+          "outputSchema": "evidence_validated",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 8096,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "structuredCV_summary_keywords": {
+              "from": "input",
+              "field": "structuredCV.summary_keywords",
+              "description": "CV summary keywords (if present)"
+            },
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "CV skills list (if present)"
+            },
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "CV experience entries (company, role, period, tags)"
+            },
+            "consensus_feedback": true,
+            "evidence_signals": true,
+            "signal_layer": true
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for evidence_validated tasks",
+            "instructions": "Act as a Evidence Integration specializing in evidence_validated. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "seniority_recruiter_reality_enforcement",
+          "name": "Seniority & Recruiter Reality Enforcement",
+          "promptBase": "stage_15_final_decision/seniority_reality_enforcer",
+          "version": "1.0.1",
+          "outputSchema": "enforced_claims",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 8096,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "evidence_validated": {
+              "from": "evidence_integration",
+              "description": "Output from Evidence Integration (validated scope, execution, leadership, business, risk signals)"
+            },
+            "seniority_signal_enforcement": true,
+            "recruiter_reality_output": true
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "recruiter",
+            "expertise": [
+              "Talent Acquisition",
+              "Candidate Screening",
+              "Cultural Fit"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Screens candidates for cultural fit and initial qualification",
+            "instructions": "Act as a Seniority & Recruiter Reality Enforcement specializing in enforced_claims. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "skill_representation_formatter",
+          "name": "Skill Representation Formatter",
+          "promptBase": "stage_15_final_decision/skill_formatter",
+          "version": "1.7.5",
+          "outputSchema": "formatted_skills",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 50000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "structuredCV_skills": {
+              "from": "input",
+              "field": "structuredCV.skills",
+              "description": "Skills from the structured CV (or structuredCV.skills)"
+            },
+            "structuredCV_sections": {
+              "from": "input",
+              "field": "structuredCV.sections",
+              "description": "CV sections (kind, section_title) for seniority-aware section title recommendations"
+            },
+            "target_role_title": true,
+            "target_role_seniority": true,
+            "target_seniority_class": true,
+            "candidate_seniority_class": true,
+            "selected_missing_skills": true,
+            "consensus_feedback": true,
+            "seniority_signal_enforcement": true,
+            "enforced_claims": {
+              "from": "seniority_recruiter_reality_enforcement",
+              "description": "Output from Seniority & Recruiter Reality Enforcement"
+            },
+            "skill_representation_mode": true
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for formatted_skills tasks",
+            "instructions": "Act as a Skill Representation Formatter specializing in formatted_skills. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "experience_representation_formatter",
+          "name": "Experience Representation Formatter",
+          "promptBase": "stage_15_final_decision/experience_formatter",
+          "version": "1.5.0",
+          "outputSchema": "formatted_experience",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "modelParams": {
+            "model": "gpt-5.4-mini",
+            "max_tokens": 50000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "structuredCV_experience": {
+              "from": "input",
+              "field": "structuredCV.experience",
+              "description": "Experience slice { items } from CV sections (kind experience); may be empty if parsing failed"
+            },
+            "structuredCV_sections": {
+              "from": "input",
+              "field": "structuredCV.sections",
+              "description": "Full CV sections array; use sections where kind is experience and content.items as the authoritative role list"
+            },
+            "target_role_title": true,
+            "target_role_seniority": true,
+            "seniority_signal_enforcement": true,
+            "enforced_claims": {
+              "from": "seniority_recruiter_reality_enforcement",
+              "description": "Output from Seniority & Recruiter Reality Enforcement"
+            },
+            "experience_format": true
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for formatted_experience tasks",
+            "instructions": "Act as a Experience Representation Formatter specializing in formatted_experience. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "profile_narrative_rewriter",
+          "name": "Profile Narrative Rewriter",
+          "promptBase": "stage_15_final_decision/profile_narrative_rewriter",
+          "version": "1.0.0",
+          "outputSchema": "profile_narrative_rewrite",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 12000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "structuredCV_sections": {
+              "from": "input",
+              "field": "structuredCV.sections",
+              "description": "Full CV sections array; rewrite only summary/profile prose sections."
+            },
+            "target_role_title": true,
+            "target_role_seniority": true,
+            "seniority_signal_enforcement": true,
+            "evidence_validated": {
+              "from": "evidence_integration",
+              "description": "Output from Evidence Integration for evidence-grounded profile phrasing."
+            },
+            "enforced_claims": {
+              "from": "seniority_recruiter_reality_enforcement",
+              "description": "Output from Seniority & Recruiter Reality Enforcement."
+            }
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for profile_narrative_rewrite tasks",
+            "instructions": "Act as a Profile Narrative Rewriter specializing in profile_narrative_rewrite. Rewrite only profile/summary prose into professional narrative while preserving facts."
+          }
+        },
+        {
+          "id": "section_level_cv_rewriter",
+          "name": "Section-Level CV Rewriter",
+          "promptBase": "stage_15_final_decision/section_rewriter",
+          "version": "1.3.5",
+          "outputSchema": "rewritten_sections",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "timeout": 300000,
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 20000,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "structuredCV_sections": {
+              "from": "input",
+              "field": "structuredCV.sections",
+              "description": "Experience entries from the structured CV. Rewrite according to experience_format."
+            },
+            "structuredCV_education": {
+              "from": "input",
+              "field": "structuredCV.education",
+              "description": "Array of education entries. If non-empty, include Education section with every item."
+            },
+            "structuredCV_certifications": {
+              "from": "input",
+              "field": "structuredCV.certifications",
+              "description": "Array of certification entries. If non-empty, include Certifications section with every item."
+            },
+            "structuredCV_awards": {
+              "from": "input",
+              "field": "structuredCV.awards",
+              "description": "Array of award entries. If non-empty, include Awards section with every item."
+            },
+            "enforced_claims": {
+              "from": "seniority_recruiter_reality_enforcement",
+              "description": "Output from Seniority & Recruiter Reality Enforcement"
+            },
+            "formatted_skills": {
+              "from": "skill_representation_formatter",
+              "description": "Output from Skill Representation Formatter (skills_formatted, missing_skills, skill_representation_mode, optional section_title_recommendations)"
+            },
+            "formatted_experience": {
+              "from": "experience_representation_formatter",
+              "description": "Output from Experience Representation Formatter (experience_formatted, optional experience_format_used)"
+            },
+            "profile_narrative_rewrite": {
+              "from": "profile_narrative_rewriter",
+              "description": "Authoritative profile prose rewrites for summary/profile sections."
+            },
+            "target_role_title": true,
+            "target_role_seniority": true,
+            "experience_format": true,
+            "skill_representation_mode": true
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for rewritten_sections tasks",
+            "instructions": "Act as a Section-Level CV Rewriter specializing in rewritten_sections. Process the provided information and deliver high-quality results."
+          }
+        },
+        {
+          "id": "role_fit_ats_enhancement",
+          "name": "Role Fit & ATS Enhancement",
+          "promptBase": "stage_15_final_decision/role_fit_ats",
+          "version": "1.0.1",
+          "outputSchema": "role_fit_summary",
+          "injectedPrompts": [
+            "json_output_format",
+            "output_verbosity_enforcement",
+            "seniority_alignment",
+            "llm_responsibilities"
+          ],
+          "inputFiles": {},
+          "modelParams": {
+            "model": "gpt-5.4-nano",
+            "max_tokens": 8192,
+            "reasoning": {
+              "effort": "none"
+            }
+          },
+          "inputs": {
+            "rewritten_sections": {
+              "from": "section_level_cv_rewriter",
+              "description": "Rewritten CV sections from Section-Level CV Rewriter (rewritten_sections)"
+            },
+            "target_role_title": true,
+            "target_role_seniority": true,
+            "experience_format": true
+          },
+          "excludeFullStructuredDocuments": true,
+          "catalog": {
+            "role": "agent",
+            "expertise": [
+              "General Assessment"
+            ],
+            "available_tasks": [
+              "Process candidate data"
+            ],
+            "description": "Specialized agent for role_fit_summary tasks",
+            "instructions": "Act as a Role Fit & ATS Enhancement specializing in role_fit_summary. Process the provided information and deliver high-quality results."
+          }
+        }
+      ]
+    }
+  ]
+}

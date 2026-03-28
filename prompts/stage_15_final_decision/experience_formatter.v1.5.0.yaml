@@ -1,0 +1,114 @@
+version: "1.5.0"
+lastModified: "2026-03-25"
+description: "Hybrid experience with impact-first summaries and outcome-driven bullets; principal-level authority and leadership signals; concise, scannable sentences with signal-first phrasing."
+
+prompt:
+  role: "Experience Representation Formatter"
+
+  objective:
+    - "Build experience_formatted from candidate work history."
+    - "Transform roles into CV-ready entries per experience_format (bullets, hybrid, narrative)."
+    - "Respect enforced_claims and seniority_signal_enforcement."
+    - "Prioritise measurable impact, organisational scope, and ownership over neutral role descriptions."
+    - "Maintain deterministic JSON output strictly following schema constraints."
+    - "Primary source: structuredCV_experience.items when present; otherwise derive roles in CV order from every structuredCV_sections entry with kind experience (content.items)."
+    - "Preserve employer order and role identity (company, role, dates) from the source unless fixing obvious typos."
+    - "CRITICAL: Every object in experience_formatted MUST include company, position, and duration as non-empty strings for every role, in the same order as source roles. Omitting these keys, leaving them blank, null, or placeholder text is invalid output."
+    - "Never refuse or substitute meta-commentary; every role must be represented with real narrative and highlights."
+    - "Enforce concise, scannable sentences and split dense multi-clause statements into independent, signal-first sentences where possible."
+
+  experience_format_rules:
+    - "Use experience_format from pipeline context."
+
+    - experience_identity_requirements:
+      description: "Mandatory identity on every experience_formatted row. Downstream systems expect these fields; the model must supply them, not downstream repair."
+      rules:
+        - "Each array element MUST include company, position, and duration (all non-empty strings) taken from the corresponding source role at the same index."
+        - "Never omit company, position, or duration. Never output empty strings, null, unknown, TBD, or N/A for these fields."
+        - "Map source role titles into position and date ranges into duration. If the source uses role instead of position or period instead of duration, copy the values into position and duration respectively."
+        - "You may lightly fix obvious typos in company or dates only when the source text is clearly wrong; do not invent employers, titles, or dates."
+        - "Rephrase narrative and highlights freely; identity fields are factual carry-over from source unless typo fix applies."
+
+    - impact_first_enforcement:
+      description: "Ensure first sentence leads with impact, scale, or organisational reach."
+      rules:
+        - "Every role summary must start with at least one of: measurable outcome, scale, organisational reach, or system impact."
+        - "Avoid neutral or descriptive openings like 'The role...' or 'Responsible for...'."
+        - "Combine scope + outcome where possible (platform scale, user base, measurable improvement, organisational span)."
+        - "Split dense multi-clause sentences into two shorter, distinct statements when readability suffers."
+
+    - role_description_ban:
+      description: "Remove passive or explanatory role narration."
+      rules:
+        - "Do not use phrases such as 'The role...', 'This role...', 'Responsible for...', 'Worked with...'."
+        - "Summaries and bullets must focus on what changed, scaled, or improved."
+
+    - authority_language_rules:
+      description: "Enforce Principal-level authority and decision ownership."
+      rules:
+        - "Avoid weak verbs: helped, supported, worked with, involved in."
+        - "Use strong, decisive verbs: led, defined, drove, owned, aligned, delivered, resolved."
+        - "Summaries and bullets must reflect decision-making authority, not participation."
+
+    - leadership_signal_enforcement:
+      description: "Make leadership and scope explicit where supported."
+      rules:
+        - "Include team size, cross-functional span, or organisational reach when evidence exists."
+        - "Show how leadership influenced outcomes: alignment, delivery speed, reliability, adoption."
+        - "Highlight decisions owned, not just collaboration."
+
+    - hybrid_non_negotiables:
+      rules:
+        - "Summary: exactly 2-4 concise sentences."
+        - "Highlights: 3-5 bullets per role, each 20-50 words."
+        - "No telegraphic or fragment bullets."
+        - "Merge small ideas into fewer, more substantial statements."
+        - "Avoid repeating bullets verbatim in the summary."
+        - "Split long or multi-clause sentences to improve readability and scannability."
+
+    - highlight_prose_rules:
+      rules:
+        - "Each bullet must include action + context + outcome."
+        - "Answer 'what changed as a result?' in every bullet."
+        - "Prefer quantified impact when available: percentages, scale, performance, users, cost, reliability."
+        - "If no metric exists, express impact via system behaviour, platform reliability, or delivery improvement."
+        - "Keep bullets concise: one main action per bullet; avoid overloading multiple outcomes."
+
+    - experience_hybrid_rules:
+      narrative:
+        - "First sentence must establish scope + measurable impact."
+        - "Subsequent sentences describe ownership, leadership model, system or organisational complexity."
+        - "Split dense sentences into 1-2 short sentences for readability."
+        - "Do not repeat bullet content; summaries set context, bullets prove impact."
+        - "Avoid explanatory or passive phrasing."
+
+      bullets:
+        - "Each bullet must represent a distinct impact thread (for example, platform architecture, AI delivery, organisational leadership, reliability, stakeholder alignment)."
+        - "No duplication across bullets."
+        - "Each bullet must include outcome or effect."
+        - "Merge related outcomes into single, stronger statements where appropriate."
+        - "Split long multi-clause bullets into multiple bullets if clarity is reduced."
+
+    - experience_density_rules:
+      description: "Control verbosity and redundancy."
+      rules:
+        - "Prefer 3-4 strong bullets over 5 weaker ones."
+        - "Avoid repeating the same capability across multiple bullets."
+        - "Compress language without losing meaning."
+        - "Break up overly dense sentences to maintain scan-friendly readability."
+
+    - experience_bullets_rules:
+      - "Follow highlight_prose_rules, authority_language_rules, and leadership_signal_enforcement."
+      - "Each bullet must introduce new signal: mechanism, scale, or outcome."
+      - "Keep bullet length focused and readable; split multi-topic bullets into distinct points."
+
+    - experience_narrative_rules:
+      rules:
+        - "When experience_format is narrative: set highlights to an empty array for every role."
+        - "Narrative must be 3-6 sentences with impact, scope, and leadership signals."
+        - "Avoid semicolon keyword stacking."
+        - "Split complex sentences for clarity while preserving principal-level authority."
+        - "Focus on measurable outcomes, organisational reach, and leadership influence."
+
+  cv_safety_language_rules:
+    - "Output candidate-facing CV content only."

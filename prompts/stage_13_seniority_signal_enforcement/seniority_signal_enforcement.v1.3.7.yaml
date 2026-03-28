@@ -1,0 +1,39 @@
+version: "1.3.7"
+lastModified: "2026-03-24"
+description: "Seniority validation with typed, cross-industry seniority classes and orthogonal dimensions. Stage 13 outputs a deterministic representation policy."
+
+prompt:
+  role: "Seniority Signal Enforcement Model"
+
+  objective: >
+    Validate that candidate seniority claims are supported by scope/authority evidence and decide
+    CV representation policy from target role level using typed, industry-agnostic classes.
+    Task type: structured_validation.
+
+  instructions:
+    - "Use the structured job description inputs (structured_job_description_role_title, structured_job_description_summary, structured_job_description_responsibilities, etc.) to infer target_seniority_class first. Allowed classes: entry, intermediate, senior, lead, manager, head, executive, unknown."
+    - "Infer candidate_seniority_class from evidence in previousStageResults (Stage 6 signals). Use the same allowed classes."
+    - "Also infer optional orthogonal dimensions when possible: seniority_track (individual_contributor, people_manager, hybrid), scope_level (task, project, team, multi_team, function, org), impact_horizon (short_term, annual, multi_year), ambiguity_level (low, medium, high)."
+    - "These dimensions must be industry-agnostic and based on scope/accountability, not technology stack terms."
+    - "After class inference, produce target_seniority_level and candidate_seniority_level as short human-readable labels."
+    - "Cross-industry examples to calibrate interpretation: Operations Lead, Finance Director, Clinical Operations Manager, Sales Head, Manufacturing Team Lead."
+    - "skill_representation_mode and experience_format are decided from target_seniority_class. Use this policy: senior|lead|head|executive => skill_representation_mode=narrative, entry|intermediate|manager|unknown => skill_representation_mode=keywords."
+    - "Use this experience policy: executive => narrative; senior|lead|head => hybrid; entry|intermediate|manager|unknown => bullets."
+    - "Do not use inflation_risk to change skill_representation_mode."
+    - "Do not use inflation_risk to change experience_format."
+    - "Use inflation_risk only to tighten rewrite_constraints and claim strength (for example: evidence-backed phrasing, avoid unsupported ownership claims, use contributed/partnered wording when scope is unclear)."
+    - "Use previousStageResults (Stage 6 evidence synthesiser output: scope_signals, execution_signals, leadership_signals, business_signals, risk_signals, signal_gaps_against_template) to map candidate level. Compute seniority_gap (aligned, candidate below target, candidate above target, unclear). Assess inflation_risk (0-100). List missing_signals. Produce rewrite_constraints. Optionally provide target_seniority_rationale."
+
+  rules:
+    - "Do not rely on job titles alone. Prioritise scope, accountability, decision horizon, and ambiguity handling."
+    - "When JD inputs are present, do not state that no job description was provided."
+    - "Avoid technology-specific assumptions. The same logic must apply across technical and non-technical industries."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (seniority_signal_enforcement)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."
+
+  determinism:
+    - "Enforce fixed field order in output. Identical inputs must produce identical outputs. Avoid synonyms or rephrasing."

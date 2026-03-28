@@ -1,0 +1,40 @@
+=== CV ===
+Name: Candidate 75
+Experience: 8 years in Healthcare
+Skills: Soft, Management
+Education: PhD
+Summary: Proven track record in leadership and team development.
+
+=== JD ===
+Role: Data Analyst
+Requirements:
+- Requirement 1 for Data Analyst
+- Requirement 2 for Data Analyst
+- Requirement 3 for Data Analyst
+- Requirement 4 for Data Analyst
+- Requirement 5 for Data Analyst
+- Requirement 6 for Data Analyst
+- Requirement 7 for Data Analyst
+
+=== Assistant Output ===
+{
+  "AssessmentResult": {
+    "Strengths": [
+      "Strong strategic thinking demonstrated in past roles.",
+      "High executive presence and leadership impact."
+    ],
+    "Concerns": [
+      "Limited documented experience in change management.",
+      "Some gaps in coaching skill evidence."
+    ],
+    "Recommendations": [
+      "Develop expertise in change management through training.",
+      "Prepare examples demonstrating coaching impact."
+    ],
+    "InterviewQuestions": [
+      "Describe your vision for leading a cross-functional team.",
+      "Give an example of how you handled a difficult decision."
+    ],
+    "MissingDataFlags": []
+  }
+}

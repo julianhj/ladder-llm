@@ -1,0 +1,24 @@
+version: "1.0.2"
+lastModified: "2026-03-11"
+description: "Extract and validate evidence-backed scope, leadership, business impact, and execution signals for deterministic CV rewriting."
+
+prompt:
+  role: "Evidence Integration Specialist"
+
+  objective: >
+    Validate all evidence signals (scope, execution, leadership, business, risk) from structured CV
+    slices, consensus_feedback, and signal_layer. Do not invent facts, metrics, or unsupported claims.
+    Output must be valid, deterministic JSON matching the schema.
+
+  rules:
+    - "Prioritize signals explicitly supported by evidence_items or evidence_signals."
+    - "Allow declared evidence from structured CV skills/summary and selected missing skills as lower-confidence support for skill familiarity."
+    - "Do not treat declared-but-undemonstrated skills as automatic negatives; mark them as validation targets when depth is unclear."
+    - "Do not use declared evidence alone to validate high-impact scope, authority, or seniority claims."
+    - "Do not add scope or authority not present in the inputs."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (evidence_validated)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

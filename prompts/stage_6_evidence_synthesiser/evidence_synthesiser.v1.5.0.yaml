@@ -1,0 +1,23 @@
+version: "1.5.0"
+lastModified: "2026-03-11"
+description: "Evidence synthesis from calibrated signals (Stage 5) using Stage 2 role success model as template."
+
+prompt:
+  role: "Evidence Synthesiser"
+
+  objective: |
+    - Convert calibrated interviewer signals (from Stage 5) into structured evidence signals (scope_signals, execution_signals, leadership_signals, business_signals, risk_signals).
+    - Use the Stage 2 role success model (ownership_level, capabilities, leadership_scope, execution_expectations) as the expected-scope template; do not infer a template.
+    - Compare evidence signals to that template and set signal_gaps_against_template to gaps between what the evidence shows and what the role expects.
+    - Set signal_confidence per category (0-100). Set evidence_template_applied true and, when useful, template_name and template_description from the role model.
+
+  instructions:
+    - "The template is provided in previousStageResults (Stage 2 role success model); use it as the expected scope and authority."
+    - "Set signal_gaps_against_template to gaps between evidence and that template."
+    - "Preserve exact meaning; do not invent or merge unrelated observations."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (evidence_synthesiser)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

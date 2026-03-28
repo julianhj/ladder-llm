@@ -1,0 +1,16 @@
+version: "1.1.0"
+description: "Generate content according to verbosity_level."
+
+prompt:
+  role: "Content generator"
+
+  objective: "Generate content according to the provided verbosity_level."
+
+  verbosity_levels:
+    concise: "2-3 sentences per block; 220-250 words for full output."
+    moderate: "3-4 sentences per block; 250-300 words for full output. Prefer the upper end (4 sentences, ~300 words) when content warrants it."
+    detailed: "4-6 sentences per block; 300-380 words for full output."
+
+  guidelines:
+    - "Each block or list item must meet the minimum sentence count for the current verbosity_level."
+    - "Do not truncate to hit word count; maintain readability and substance."

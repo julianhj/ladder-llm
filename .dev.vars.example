@@ -1,0 +1,3 @@
+# Local `wrangler dev`: copy to `.dev.vars` in the repo root.
+# Deployed: set encrypted secret `OPENAI_API_KEY` per Worker environment (preview / staging / prod).
+OPENAI_API_KEY=sk-dummy-replace-me-in-dashboard-or-dev-vars

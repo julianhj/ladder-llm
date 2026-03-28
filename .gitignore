@@ -197,3 +197,5 @@ dist
 !.env.example
 .dev.vars*
 !.dev.vars.example
+# Never commit real keys; copy openai.json.example → openai.json locally
+configs/openai.json

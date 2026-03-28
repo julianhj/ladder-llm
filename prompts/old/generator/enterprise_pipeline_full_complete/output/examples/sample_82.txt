@@ -1,0 +1,38 @@
+=== CV ===
+Name: Candidate 81
+Experience: 11 years in Finance
+Skills: Management, Soft
+Education: Masters
+Summary: Proven track record in leadership and team development.
+
+=== JD ===
+Role: Software Engineer
+Requirements:
+- Requirement 1 for Software Engineer
+- Requirement 2 for Software Engineer
+- Requirement 3 for Software Engineer
+- Requirement 4 for Software Engineer
+- Requirement 5 for Software Engineer
+
+=== Assistant Output ===
+{
+  "AssessmentResult": {
+    "Strengths": [
+      "Strong strategic thinking demonstrated in past roles.",
+      "High executive presence and leadership impact."
+    ],
+    "Concerns": [
+      "Limited documented experience in change management.",
+      "Some gaps in coaching skill evidence."
+    ],
+    "Recommendations": [
+      "Develop expertise in change management through training.",
+      "Prepare examples demonstrating coaching impact."
+    ],
+    "InterviewQuestions": [
+      "Describe your vision for leading a cross-functional team.",
+      "Give an example of how you handled a difficult decision."
+    ],
+    "MissingDataFlags": []
+  }
+}

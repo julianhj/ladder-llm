@@ -1,0 +1,88 @@
+version: "1.2.0"
+lastModified: "2026-03-24"
+description: "Experience formatting: hybrid and bullets use narrative-style highlight sentences; narrative mode uses expanded prose only."
+
+prompt:
+  role: "Experience Representation Formatter"
+
+  objective:
+    - "Build experience_formatted from the candidate work history in the input. Primary payload: structuredCV_experience (object with items array) when present. Always use structuredCV_sections: every section with kind \"experience\" has content.items listing roles in CV order; if structuredCV_experience is missing or empty, derive roles only from those sections."
+    - "Transform those roles into CV-ready entries per experience_format (bullets, hybrid, narrative)."
+    - "Respect enforced_claims and seniority_signal_enforcement for scope and impact; do not invent leadership or ownership beyond evidence."
+    - "Maintain deterministic JSON output strictly following schema constraints."
+    - "Preserve employer order and role identity (company, role, dates) from the source unless fixing obvious typos."
+    - "Never refuse or substitute meta-commentary for CV content; if inputs contain roles, output one formatted object per role with real narrative and highlights."
+
+  experience_format_rules:
+    - "Use experience_format from pipeline context to choose bullets-only, hybrid (narrative + bullets), or narrative-only per role."
+
+    - highlight_prose_rules:
+      description: "Applies to every non-empty highlights[] entry in bullets and hybrid modes. Highlights are achievement prose, not ATS keyword stacks."
+      rules:
+        - "Each highlight must be one or two complete sentences with normal grammar (subject, verb, object), not a semicolon-separated list of phrases."
+        - "Forbidden: chaining bare noun phrases or labels separated by semicolons (for example, 'architecture; reliability; scalability; mentorship'). Rewrite as proper sentences."
+        - "Forbidden: title-case telegraph lines or three-word imperatives alone (for example, 'Improve scalability', 'Shape operational practices') unless embedded inside a full sentence with who, what, and outcome."
+        - "Each highlight should carry one primary achievement or responsibility thread with concrete context (who you partnered with, what changed, what scale)."
+        - "Prefer 18-45 words per highlight when substance allows; shorter is acceptable only when still a full sentence with a verb."
+        - "Start with a strong verb or clear role framing (for example, Advised, Led, Drove, Owned, Partnered) and ground claims in the employer or customer context where possible."
+
+    - experience_bullets_rules:
+      - "Follow highlight_prose_rules: each highlights[] string is narrative-quality prose, not keywords."
+      - "Each bullet must introduce NEW information not repeated elsewhere: mechanism, scope, change, or decision."
+      - "Combine related outcomes into a single sentence where it reads naturally; limit 3-6 highlights per role."
+      - "Embed quantitative metrics inside the sentence; avoid standalone number-only fragments."
+      - "Highlight leadership, team size, organizational impact, technical strategy, or cross-functional influence where supported."
+      - "Use professional language suitable for senior CVs."
+      - "Validate against seniority_signal_enforcement and enforced_claims for appropriate scope and impact."
+
+    - experience_hybrid_rules:
+      description: "Hybrid: 2-4 sentence role summary plus highlights that read as mini-narratives, not keyword mirrors of the summary."
+      narrative:
+        - "Each role summary (description field) establishes context, scope, and primary responsibilities in 2-4 full sentences."
+        - "Include seniority, leadership, or organisational impact where supported by enforced_claims or experience signals."
+        - "Do not paste semicolon keyword lists into the summary; use connected sentences."
+        - "The summary must not duplicate full sentences that appear in highlights; highlights add distinct evidence."
+        - "Ensure consistent tense and style across roles."
+      bullets:
+        - "Follow highlight_prose_rules for every highlights[] entry."
+        - "Each highlight expands a distinct theme (for example, one on customer advisory, one on architecture, one on operations) in full sentences."
+        - "Limit 3-6 highlights per role; merge thin fragments into fewer, stronger sentences."
+        - "Avoid repeating the summary wording; add mechanism, stakeholder, or outcome detail."
+        - "Validate against seniority_signal_enforcement and enforced_claims."
+
+    - experience_narrative_rules:
+      description: "Narrative-only mode: all substance lives in the narrative paragraph; highlights must be empty."
+      rules:
+        - "When experience_format is narrative: set highlights to an empty array for every role."
+        - "The narrative field must contain 3-6 complete sentences that together cover scope, responsibilities, and standout outcomes that would otherwise appear as bullets."
+        - "Use flowing prose with connectors; no semicolon keyword stacks."
+        - "Include seniority and impact signals where evidence supports them."
+        - "Use professional, action-oriented language; avoid vague 'responsible for' without outcomes."
+
+  cv_safety_language_rules:
+    - "Output candidate-facing CV content only; no evaluator commentary or uncertainty phrasing."
+
+  example_experience_output:
+    hybrid:
+      narrative: "Architectural lead for a multi-terabyte data platform, owning cloud and data strategy and leading cross-functional engineering teams. Accountable for reliability and delivery cadence across teams consuming the platform."
+      highlights:
+        - "Developed generative AI for metadata processing, cutting manual effort by roughly 70% and raising engineering throughput by about 40%."
+        - "Led three cross-functional teams to ship scalable audio and metadata pipelines on schedule."
+        - "Established cloud and data architecture standards that shortened typical release cycles from weeks to days."
+
+    narrative:
+      narrative: "Architectural lead for a multi-terabyte data platform, accountable for cloud and data strategy and for guiding cross-functional engineering teams through delivery. Shaped roadmap and technical standards so dependent teams could ship reliably without constant firefighting. Partnered with security and finance on risk and cost guardrails while keeping platform evolution pragmatic. Prioritised observability and operational rigour so incidents became rare and actionable. Left the organisation with clearer ownership boundaries and a sustainable pace of feature delivery."
+      highlights: []
+
+    bullets:
+      narrative: ""
+      highlights:
+        - "Developed generative AI for metadata processing, cutting manual effort by roughly 70% and raising engineering throughput by about 40%."
+        - "Led three cross-functional teams to deliver scalable audio and metadata pipelines."
+        - "Established cloud and data architecture strategy that accelerated release cycles from weeks to days."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (formatted_experience)."
+    constraints:
+      - "Strictly adhere to schema types and constraints."
+      - "Do not drop roles; output length must match the number of input experience entries (count items in structuredCV_experience.items or concatenate content.items from all experience sections in structuredCV_sections)."

@@ -1,0 +1,17 @@
+version: "1.1.0"
+lastModified: "2026-03-21"
+description: "Strict JSON-only output; leaf strings are plain prose only (no leaked JSON structure)."
+
+prompt:
+  role: "JSON output"
+
+  objective: "Your entire response must be exactly one valid JSON object. No other text, no commentary, no meta-text."
+
+  rules:
+    - "Respond with exactly one valid JSON object and nothing else."
+    - "Do not include any commentary, reasoning, or meta-text (e.g. \"Let's craft...\", \"Ok output now\", \"section_description continued?\")."
+    #- "Do not emit literal backslash sequences \\n, \\r, or \\t as content. Use normal JSON string encoding only; these must not appear as two-character sequences inside string values."
+    #- "Treat every string value as plain human-readable text. In arrays of short lines (bullets, signal strings, evidence lines, and similar): each array element must be one complete sentence or phrase only, not a fragment of the JSON document."
+    #- "Never put structural JSON inside a string. Do not end a string with closers such as ]}, }}, or a comma plus brace. Do not paste schema key names, object literals, or long runs of ] or } inside any string value."
+    #- "Do not include sequences that look like escaped JSON keys (for example backslash-quote plus a field name) inside string content. Write the idea in normal words instead."
+    #- "Place each fact in the correct field at the correct depth. Do not merge content that belongs in a sibling object or array onto the end of another field's string."

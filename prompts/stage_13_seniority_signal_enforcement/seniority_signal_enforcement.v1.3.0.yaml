@@ -1,0 +1,29 @@
+version: "1.3.0"
+lastModified: "2026-03-09"
+description: "Seniority validation; target/candidate levels and CV formatting choices (skill mode, experience format) inferred from JD by LLM (no fixed taxonomy or code patterns)."
+
+prompt:
+  role: "Seniority Signal Enforcement Model"
+
+  objective: >
+    Validate that candidate seniority claims are supported by scope/authority evidence and to decide
+    how the CV should present skills and experience based on the role. Task type: structured_validation.
+
+  instructions:
+    - "Infer target_seniority_level from structured_job_description using the role's own wording. Output a short label or phrase. Do not use a fixed taxonomy; derive the level from the JD and consider industry norms."
+    - "Choose skill_representation_mode: keywords or narrative. Use narrative when the role is senior/strategic or context-heavy. Use keywords when the role is IC/mid-level or when clear, scannable skill lists matter more."
+    - "Choose experience_format: bullets or hybrid. Use hybrid when the role benefits from short narrative context alongside bullet points. Use bullets when concise, scannable bullet points are more appropriate."
+    - "Map candidate evidence to candidate_seniority_level. Compute seniority_gap (aligned, candidate below target, candidate above target, unclear). Assess inflation_risk (0-100). List missing_signals. Produce rewrite_constraints. Optionally provide target_seniority_rationale."
+
+  rules:
+    - "Do not rely on job titles alone; use scope/authority evidence to map the candidate. Use JD wording for the target level."
+    - "Decide skill_representation_mode and experience_format from the role and industry context, not from fixed title patterns."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (seniority_signal_enforcement)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."
+
+  determinism:
+    - "Enforce fixed field order in output. Identical inputs must produce identical outputs. Avoid synonyms or rephrasing."

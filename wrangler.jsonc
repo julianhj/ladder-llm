@@ -1,16 +1,39 @@
 {
-	"compatibility_date": "2025-10-08",
-	"main": "src/index.ts",
-	"name": "ladder-llm",
-	"upload_source_maps": true,
-	"observability": {
-		"enabled": true
-	},
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "ladder-llm",
-			"database_id": "58b9cf82-a458-43a5-8008-449f28f7d36b"
-		}
-	]
+  // OPENAI_API_KEY is a Worker secret (not in this file). Set the same value for preview / staging / prod
+  // in the dashboard (Variables → Encrypt) or via: wrangler secret put OPENAI_API_KEY -e <env>
+  // Local dev: copy .dev.vars.example → .dev.vars and put your key there.
+  "name": "ladder-llm",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-26",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "CLOUDFLARE_ACCESS_TEAM_DOMAIN": "https://ladderz.cloudflareaccess.com",
+    "CLOUDFLARE_ACCESS_AUD": "db7688ec72e96fede34905cbc2b2ce759ff5910e5e9e4d5e6afa15ba9a7983a5"
+  },
+  "env": {
+    "preview": {
+      "name": "ladder-llm-preview",
+      "vars": {
+        "CLOUDFLARE_ACCESS_TEAM_DOMAIN": "https://ladderz.cloudflareaccess.com",
+        "CLOUDFLARE_ACCESS_AUD": "db7688ec72e96fede34905cbc2b2ce759ff5910e5e9e4d5e6afa15ba9a7983a5"
+      }
+    },
+    "staging": {
+      "name": "ladder-llm-staging",
+      "vars": {
+        "CLOUDFLARE_ACCESS_TEAM_DOMAIN": "https://ladderz.cloudflareaccess.com",
+        "CLOUDFLARE_ACCESS_AUD": "37014dba3c3a3456818dfb030a2126ba8f3daa5cc6003f7b97c2a59c078d3ec0"
+      }
+    },
+    "prod": {
+      "name": "ladder-llm-prod",
+      "vars": {
+        "CLOUDFLARE_ACCESS_TEAM_DOMAIN": "https://ladderz.cloudflareaccess.com",
+        "CLOUDFLARE_ACCESS_AUD": "735394f7d192a3d4f181675eb381bd5a848372bbbb1bd7063e1639a68a10e7c0"
+      }
+    }
+  }
 }

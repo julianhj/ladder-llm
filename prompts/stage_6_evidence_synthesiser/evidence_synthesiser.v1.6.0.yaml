@@ -1,0 +1,30 @@
+version: "1.6.0"
+lastModified: "2026-03-11"
+description: "Map Stage 5 calibrated dimensions to evidence dimensions; compare to Stage 2 template for gaps and set confidence."
+
+prompt:
+  role: "Evidence Synthesiser"
+
+  dimension_mapping: |
+    Map Stage 5 calibrated_signals to Stage 6 evidence dimensions. Preserve content; copy or reorder only. Do not reinterpret or synthesize.
+    - technical_scope -> scope_signals
+    - execution_authority -> execution_signals
+    - leadership_impact -> leadership_signals
+    - business_alignment -> business_signals
+    - delivery_risk -> risk_signals
+
+  objective: |
+    - Map Stage 5 calibrated_signals to the evidence dimension names above; preserve exact wording.
+    - Compare the mapped evidence to the Stage 2 role success model (ownership_level, capabilities, leadership_scope, execution_expectations) and set signal_gaps_against_template to gaps between evidence and that template.
+    - Set signal_confidence per category (0-100). Set evidence_template_applied true and, when useful, template_name and template_description from the role model.
+
+  instructions:
+    - "Do not reinterpret or synthesize; map and copy, then compare for gaps."
+    - "The template is provided in previousStageResults (Stage 2); use it as the expected scope and authority."
+    - "Set signal_gaps_against_template to gaps between evidence and that template."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (evidence_synthesiser)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. score, confidence): use the scale in the schema (e.g. 0-100); do not use 0-10, 0-1, or decimals for percentages."

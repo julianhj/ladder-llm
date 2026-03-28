@@ -1,40 +1,63 @@
 {
 	"name": "ladder-llm",
-	"description": "Complete backend API template using Hono + Chanfana + D1 + Vitest.",
-	"cloudflare": {
-		"label": "Backend OpenAPI Template",
-		"products": [
-			"Workers",
-			"D1"
-		],
-		"categories": [
-			"storage"
-		],
-		"docs_url": "https://chanfana.com",
-		"preview_icon_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/1b2805d9-e7fb-4576-5176-6b409e251800/public",
-		"preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/cbde46cf-20fa-4548-7f70-1ae8c2f48900/preview",
-		"publish": true
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"description": "Recruitment LLM pipeline and Cloudflare Worker API (Hono + Chanfana)",
+	"engines": {
+		"node": ">=22.12.0"
+	},
+	"scripts": {
+		"generate-assets": "node scripts/generate-openai-assets.mjs",
+		"build": "npm run generate-assets && tsc --noEmit",
+		"predev": "npm run generate-assets",
+		"predeploy": "npm run build",
+		"dev": "wrangler dev --env preview",
+		"dev:staging": "wrangler dev --env staging",
+		"dev:prod": "wrangler dev --env prod",
+		"deploy": "wrangler deploy",
+		"deploy:preview": "wrangler deploy --env preview",
+		"deploy:staging": "wrangler deploy --env staging",
+		"deploy:prod": "wrangler deploy --env prod",
+		"typecheck": "npm run generate-assets && tsc --noEmit",
+		"generate-types": "wrangler types",
+		"test": "jest --testPathIgnorePatterns=api-endpoint",
+		"test:unit": "jest --testMatch='**/*.test.ts' --testPathIgnorePatterns='integration'",
+		"test:integration": "jest --testMatch='**/*.integration.test.ts'",
+		"test:integration:full": "jest --testMatch='**/test_pipeline_full.integration.test.ts'",
+		"test:watch": "jest --watch",
+		"test:coverage": "jest --coverage",
+		"test:connection": "tsx scripts/test-connection.ts",
+		"test:api": "tsx tests/api-endpoint.test.ts",
+		"convert-assessments": "tsx scripts/convert_assessments_to_jsonl.ts",
+		"extract-schemas": "tsx scripts/extract_output_schemas.ts",
+		"combine-prompts": "tsx scripts/combine_prompts_jsonl.ts",
+		"create-schema-training": "tsx scripts/create_schema_training_data.ts",
+		"generate-training-data": "tsx prompts/generator/generateTrainingData.ts",
+		"validate-training-data": "tsx prompts/generator/validateAll.ts"
 	},
 	"dependencies": {
 		"chanfana": "2.8.3",
+		"express": "^4.18.2",
+		"fs-extra": "^11.3.2",
 		"hono": "4.11.1",
-		"zod": "3.25.67"
+		"jose": "^6.2.2",
+		"multer": "^1.4.5-lts.1",
+		"openai": "^6.25.0",
+		"yaml": "^2.6.0",
+		"zod": "3.25.67",
+		"zod-to-json-schema": "^3.24.6"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.10.11",
-		"@types/node": "24.10.1",
-		"typescript": "5.9.3",
-		"vitest": "3.2.4",
-		"wrangler": "4.56.0"
-	},
-	"private": true,
-	"scripts": {
-		"cf-typegen": "wrangler types",
-		"deploy": "wrangler deploy",
-		"dev": "pnpm seedLocalDb && wrangler dev",
-		"predeploy": "wrangler d1 migrations apply DB --remote",
-		"schema": "npx chanfana",
-		"seedLocalDb": "wrangler d1 migrations apply DB --local",
-		"test": "wrangler deploy --dry-run && npx vitest run --config tests/vitest.config.mts"
+		"@types/express": "^4.17.21",
+		"@types/jest": "^29.5.12",
+		"@types/multer": "^1.4.11",
+		"@types/node": "^24.10.1",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.1.2",
+		"ts-node": "^10.9.1",
+		"tsx": "^4.20.6",
+		"typescript": "^5.9.2",
+		"wrangler": "^4.77.0"
 	}
 }

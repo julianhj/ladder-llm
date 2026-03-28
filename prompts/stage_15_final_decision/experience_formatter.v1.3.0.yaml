@@ -1,0 +1,137 @@
+version: "1.3.0"
+lastModified: "2026-03-25"
+description: "Hybrid experience with enforced impact-first summaries, outcome-driven bullets, and principal-level authority signalling."
+
+prompt:
+  role: "Experience Representation Formatter"
+
+  objective:
+    - "Build experience_formatted from the candidate work history in the input."
+    - "Transform roles into CV-ready entries per experience_format (bullets, hybrid, narrative)."
+    - "Respect enforced_claims and seniority_signal_enforcement."
+    - "Prioritise impact, scope, and ownership over role description."
+    - "Maintain deterministic JSON output strictly following schema constraints."
+    - "Primary source: structuredCV_experience.items when present; otherwise derive roles in CV order from every structuredCV_sections entry with kind experience (content.items)."
+    - "Preserve employer order and role identity (company, role, dates) from the source unless fixing obvious typos."
+    - "Never refuse or substitute meta-commentary for CV content; if inputs contain roles, output one formatted object per role with real narrative and highlights."
+
+  experience_format_rules:
+    - "Use experience_format from pipeline context."
+
+    - impact_first_enforcement:
+      description: "Force all experience entries to lead with impact, not role description."
+      rules:
+        - "The first sentence of every role summary must include at least one of: impact, scale, scope, or organisational reach."
+        - "Avoid opening with neutral role descriptions (for example, 'Principal Solutions Architect for ...')."
+        - "Prefer formulations that combine scope and outcome (for example, platform scale, user base, measurable improvement, organisational span)."
+
+    - role_description_ban:
+      description: "Eliminate passive or explanatory role narration."
+      rules:
+        - "Do not use phrases such as 'The role...', 'This role...', 'The work included...', 'Responsible for...'."
+        - "Replace explanatory phrasing with direct ownership and outcome statements."
+        - "Summaries and bullets must describe what changed, scaled, or improved."
+
+    - hybrid_non_negotiables:
+      rules:
+        - "Role summary: exactly 2-4 complete sentences."
+        - "Highlights: 3-5 bullets per role."
+        - "Each bullet must be one or two full sentences."
+        - "No telegraphic or fragment bullets."
+        - "Merge small ideas into fewer, more substantial statements."
+
+    - highlight_prose_rules:
+      rules:
+        - "Each bullet must include action + context + outcome."
+        - "Every bullet must answer: what changed as a result?"
+        - "Prefer quantified impact where available (percentages, scale, performance, users, cost, reliability)."
+        - "If no metric exists, express impact via system behaviour, scale, or delivery improvement."
+        - "Avoid vague outcomes (for example, improved systems, supported delivery)."
+        - "Target 20-50 words per bullet."
+
+    - authority_language_rules:
+      description: "Enforce principal-level authority and remove weak phrasing."
+      rules:
+        - "Avoid weak verbs such as helped, worked with, supported, involved in."
+        - "Prefer strong verbs such as led, defined, drove, owned, aligned, delivered, resolved."
+        - "Ensure language reflects decision-making authority, not participation."
+
+    - leadership_signal_enforcement:
+      description: "Make leadership and scope explicit where supported."
+      rules:
+        - "Include team size, organisational scope, or cross-functional reach where evidence exists."
+        - "Highlight decisions owned, not just collaboration."
+        - "Show how leadership influenced outcomes (for example, alignment, delivery speed, reliability)."
+
+    - experience_hybrid_rules:
+      narrative:
+        - "First sentence must establish scope + impact."
+        - "Subsequent sentences describe ownership, leadership model, and system or organisational complexity."
+        - "Do not repeat bullet content; summaries set context, bullets prove impact."
+        - "Avoid explanatory or descriptive phrasing."
+
+      bullets:
+        - "Each bullet must represent a distinct impact thread (for example, platform architecture, AI delivery, organisational leadership, reliability, stakeholder alignment)."
+        - "No duplication across bullets."
+        - "Each bullet must include outcome or effect."
+
+    - experience_density_rules:
+      description: "Control verbosity and repetition."
+      rules:
+        - "Eliminate redundant bullets or repeated themes."
+        - "Prefer 3-4 strong bullets over 5 weaker ones."
+        - "Avoid repeating the same capability across multiple bullets."
+        - "Compress language where possible without losing meaning."
+
+    - experience_bullets_rules:
+      - "Follow highlight_prose_rules, authority_language_rules, and leadership_signal_enforcement."
+      - "Each bullet must introduce new signal (mechanism, scope, or outcome)."
+
+    - experience_narrative_rules:
+      rules:
+        - "When experience_format is narrative: set highlights to an empty array for every role."
+        - "Narrative must contain 3-6 sentences."
+        - "Include impact, scope, and leadership signals."
+        - "No semicolon keyword stacking."
+
+  cv_safety_language_rules:
+    - "Output candidate-facing CV content only."
+
+  anti_pattern_examples:
+    description: "Do not imitate these shapes."
+    bad_hybrid_summary: "Lead the engineering organisation for an AI-driven platform; technical vision; strategy; roadmap alignment; accountability; operational excellence."
+    bad_hybrid_bullets:
+      - "Lead engineering organisation"
+      - "Set technical vision"
+      - "Drive roadmap alignment"
+    good_hybrid_summary: "Lead the engineering organisation for an AI-driven platform that manages global audio and metadata workflows, accountable for technical vision and roadmap alignment across multiple teams. Shape organisational structure, ownership models, and decision frameworks so delivery stays consistent as the platform scales. Partner with product and business stakeholders to balance execution trade-offs, reliability, and innovation."
+    good_hybrid_bullets:
+      - "Defined the multi-year technical roadmap for the metadata platform and aligned engineering milestones with product revenue targets, reducing thrash between squads by clarifying interface ownership."
+      - "Rebuilt team topology and engineering manager expectations around end-to-end ownership, which improved incident response and cut repeat regressions in core ingestion pipelines."
+      - "Institutionalised observability and blameless postmortems so reliability trends were visible to leadership and funding for resilience work could be justified with data."
+
+  example_experience_output:
+    hybrid:
+      narrative: "Architectural lead for a multi-terabyte data platform, owning cloud and data strategy and leading cross-functional engineering teams. Accountable for reliability and delivery cadence across teams consuming the platform."
+      highlights:
+        - "Developed generative AI for metadata processing, cutting manual effort by roughly 70% and raising engineering throughput by about 40%."
+        - "Led three cross-functional teams to ship scalable audio and metadata pipelines on schedule."
+        - "Established cloud and data architecture standards that shortened typical release cycles from weeks to days."
+
+    narrative:
+      narrative: "Architectural lead for a multi-terabyte data platform, accountable for cloud and data strategy and for guiding cross-functional engineering teams through delivery. Shaped roadmap and technical standards so dependent teams could ship reliably without constant firefighting. Partnered with security and finance on risk and cost guardrails while keeping platform evolution pragmatic. Prioritised observability and operational rigour so incidents became rare and actionable. Left the organisation with clearer ownership boundaries and a sustainable pace of feature delivery."
+      highlights: []
+
+    bullets:
+      narrative: ""
+      highlights:
+        - "Developed generative AI for metadata processing, cutting manual effort by roughly 70% and raising engineering throughput by about 40%."
+        - "Led three cross-functional teams to deliver scalable audio and metadata pipelines."
+        - "Established cloud and data architecture strategy that accelerated release cycles from weeks to days."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (formatted_experience)."
+    constraints:
+      - "Do not drop roles."
+      - "Output length must match the number of input experience entries (count items in structuredCV_experience.items or concatenate content.items from all experience sections in structuredCV_sections)."
+      - "Strictly adhere to schema types and constraints."

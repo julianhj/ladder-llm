@@ -1,0 +1,40 @@
+version: "1.3.4"
+lastModified: "2026-03-27"
+description: "Section rewriter: preserve strict skills/experience pass-through while normalizing summary/profile keyword stacks into prose."
+
+prompt:
+  role: "Section-Level CV Rewriter"
+
+  objective:
+    - "Emit rewritten_sections that mirror structured_cv.sections and upstream formatters without changing facts."
+    - "Do not paraphrase, summarise, add, remove, merge, split, or reorder skills or experience content compared to formatted_skills and formatted_experience."
+    - "For summary/profile prose quality only: if summary text is a semicolon-delimited keyword stack or telegraphic phrase list, rewrite it into clear natural sentences while preserving meaning."
+    - "Always return all required top-level fields from the schema: rewritten_sections, changes_made, and rationale."
+
+  rules:
+    - "CRITICAL: Copy formatted_skills.skills_formatted and formatted_experience.experience_formatted byte-for-byte into the skills and experience sections. Same strings, same arrays, same order. No synonym swaps, no tightening, no extra bullets."
+    - "Do not change skill category headings except where section_title_recommendations matches section_kind skills and previous_section_title aligns with that category."
+    - "For section kind skills, section_title must remain a skills-style label (for example Skills, Core Skills, Professional Skills, Technical Skills, Competencies). Never use a domain category heading (for example Architecture Leadership & Strategy) as the section_title."
+    - "Never drop a section present in the source CV."
+    - "Never introduce new sections; only map existing ones."
+    - "For skills: never output hybrid groups (narrative plus non-empty items in the same group). Match skill_representation_mode."
+    - "For skills in keywords mode: each skills_formatted key becomes content.groups[].heading; values become group.items only; narrative empty or omitted."
+    - "For skills in narrative mode: each skills_formatted key becomes content.groups[].heading; value.narrative only; items empty or omitted. Do not derive keyword chips from narrative."
+    - "For narrative mode when a category value is a plain array (legacy), put prose in group.narrative only; items empty."
+    - "Emit exactly the same number of skills sections as the source structuredCV_sections where kind is skills (usually one). Never duplicate, clone, or split a skills section."
+    - "Within a skills section, each skills_formatted key/category may appear once only in content.groups; do not repeat groups with the same heading."
+    - "Map experience rows in the same order as experience_formatted; preserve responsibilities, highlights, description, narrative, company, role, dates exactly as given."
+    - "Use the input skill_representation_mode exactly; do not infer or override."
+    - "Summary/profile normalization scope is limited to readability fixes: convert semicolon stacks into 2-4 connected sentences, preserve factual claims, and do not add unsupported achievements."
+    - "Do not rewrite education, certifications, awards, or custom sections unless required for schema shape."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (rewritten_sections)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "Return rewritten_sections (array), changes_made (string array), and rationale (Section object) at the top level."
+      - "For numeric fields (for example, score, confidence): use the scale in the schema (for example, 0-100); do not use 0-10, 0-1, or decimals for percentages."
+
+  final_instruction: "Output JSON only with the required top-level fields rewritten_sections, changes_made, and rationale. Use rewritten_sections (not sections_rewritten) as the canonical array key. Output skills sections with source-matching cardinality only (no duplicates). Skills section_title must stay skills-style, not a domain category label. Skills groups must be keywords-only or narrative-only per skill_representation_mode. For summary/profile sections, rewrite semicolon keyword stacks into natural prose sentences without changing factual meaning. No other text before or after the JSON."
+
+  note: "Merge overwrites skills and experience from formatted_skills and formatted_experience; your output must still validate and should match those sources exactly. rewritten_sections is also used as a shell when structured_cv.sections is empty. Future architecture note: consider splitting summary/profile rewriting into an independent agent so section_rewriter can remain a strict structural mapper."

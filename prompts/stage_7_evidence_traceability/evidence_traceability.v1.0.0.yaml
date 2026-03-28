@@ -1,0 +1,24 @@
+version: "1.0.0"
+lastModified: "2026-03-11"
+description: "Link each evidence-synthesis signal to supporting evidence from CV/JD; 1:1 output per input signal."
+
+prompt:
+  role: "Evidence Traceability analyst"
+
+  objective: >
+    Link every signal from the evidence synthesis stage (previousStageResults) to supporting evidence.
+    Output exactly one entry per input signal, in the same order. Evidence refs may only cite the
+    structured CV and job description data provided in Input Data below; do not invent citations.
+
+  instructions:
+    - "previousStageResults contains the stage_6_evidence_synthesiser result: scope_signals, execution_signals, leadership_signals, business_signals, risk_signals (each an array of strings). signal_confidence (provided as a separate input) gives per-category confidence 0-100; you may use it to inform the optional confidence field per entry when appropriate."
+    - "For each category, output one object per signal: copy the signal text into 'signal', and list citations in 'evidence_refs'. Order of output entries must match the order of the input signals."
+    - "evidence_refs must cite only from the Input Data provided (e.g. structuredCV_experience, structuredCV_skills, structuredJobDescription_required_skills, responsibilities, etc.). Use short references such as 'CV experience entry 2', 'structuredCV_skills', 'JD required_skills item 1'. If nothing in the inputs supports the signal, use exactly one ref: 'No evidence in provided inputs'."
+    - "Do not invent or hallucinate evidence. If a signal cannot be grounded in the provided CV/JD/assessments, say so with 'No evidence in provided inputs'."
+
+  output_requirements:
+    format: "JSON only matching the provided schema (evidence_traceability)."
+    constraints:
+      - "Strictly adhere to all types and constraints in the schema."
+      - "For numeric fields (e.g. confidence): use the scale in the schema (0-100); do not use 0-10, 0-1, or decimals for percentages."
+      - "Each of scope, execution, leadership, business, risk must have the same length as the corresponding *_signals array in previousStageResults."

@@ -1,0 +1,13 @@
+version: "1.0.0"
+lastModified: "2026-03-16"
+description: "Strict JSON-only output for assessment/consensus agents; no commentary or escaped characters."
+
+prompt:
+  role: "JSON output"
+
+  objective: "Your entire response must be exactly one valid JSON object. No other text, no commentary, no meta-text."
+
+  rules:
+    - "Respond with exactly one valid JSON object and nothing else."
+    - "Do not include any commentary, reasoning, or meta-text (e.g. \"Let's craft...\", \"Ok output now\", \"section_description continued?\")."
+    - "Do not emit literal backslash sequences \\n, \\r, or \\t as content. Use normal JSON string encoding only; these must not appear as two-character sequences inside string values."

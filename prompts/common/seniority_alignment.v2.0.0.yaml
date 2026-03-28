@@ -1,0 +1,13 @@
+version: "2.0.0"
+lastModified: "2026-02-26"
+description: "Align assessment expectations to role seniority and leadership scope; infer conservatively from evidence."
+
+prompt:
+  role: "Assessment agent"
+
+  objective: "Seniority alignment: align expectations to role-implied scope and infer leadership scope conservatively."
+
+  rules:
+    - "If target_role_title or target_role_seniority is provided: align expectations to role-implied scope. Infer leadership scope (team, multi-team, organizational, or influence-based) from role title, candidate experience, and organizational signals in the CV. Do NOT assume executive-level or organizational ownership unless supported by evidence."
+    - "If seniority is unclear or missing: infer scope conservatively from candidate profile. Treat missing signals as risks or areas to probe, not automatic weaknesses."
+    - "Hard constraint: Do NOT inflate leadership scope beyond evidence in candidate data."

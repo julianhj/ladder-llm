@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "lastModified": "2024-11-08",
+  "apiKey": "${OPENAI_API_KEY}",
+  "baseURL": "https://api.openai.com/v1",
+  "timeout": 360000,
+  "maxRetries": 3,
+  "defaultModel": {
+    "name": "gpt-5.2",
+    "temperature": 0.7,
+    "maxTokens": 1000
+  },
+  "preprocessingModel": {
+    "name": "gpt-5.2",
+    "temperature": 0.2,
+    "maxTokens": 8000
+  },
+  "systemMessage": "You are an expert evaluator following strict JSON output rules.",
+  "pricing": {
+    "inputCostPerMillion": 1.25,
+    "outputCostPerMillion": 10,
+    "currency": "USD",
+    "lastUpdated": "2024-11-06"
+  }
+}
