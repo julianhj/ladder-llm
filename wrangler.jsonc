@@ -1,0 +1,16 @@
+{
+	"compatibility_date": "2025-10-08",
+	"main": "src/index.ts",
+	"name": "ladder-llm",
+	"upload_source_maps": true,
+	"observability": {
+		"enabled": true
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "ladder-llm",
+			"database_id": "58b9cf82-a458-43a5-8008-449f28f7d36b"
+		}
+	]
+}
